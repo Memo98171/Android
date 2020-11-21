@@ -19,8 +19,13 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class CrimeListFragment extends Fragment {
+    private static final int REQUEST_CRIME = 1;
+
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
+
+    private int listItemPosition;
+    private static final String SAVED_LIST_ITEM_POSITION = "saved_list_item_position";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -28,16 +33,39 @@ public class CrimeListFragment extends Fragment {
         mCrimeRecyclerView = view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        if(savedInstanceState != null){
+            listItemPosition = savedInstanceState.getInt(SAVED_LIST_ITEM_POSITION, 0);
+        }
+
         updateUI();
         return view;
+    }
+
+    //Si usa onResume() invece che onStart per motivi di sicurezza nell'aggiornare
+    //il view fragment.
+    //Se la mia attività è in pausa e usiamo onStart(), questa non verrà caricata
+    @Override
+    public void onResume(){
+        super.onResume();
+        updateUI();
     }
 
     private void updateUI(){
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+        if(mAdapter == null){
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        }else{
+            mAdapter.notifyItemChanged(listItemPosition);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putInt(SAVED_LIST_ITEM_POSITION, listItemPosition);
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -83,8 +111,9 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View view){
+            listItemPosition = getAdapterPosition();
             Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_CRIME);
         }
     }
 
@@ -122,4 +151,5 @@ public class CrimeListFragment extends Fragment {
             }
         }
     }
+
 }
