@@ -4,9 +4,9 @@
     <string name="crime_title_label">Title</string>
     <string name="crime_details_label">Details</string>
     <string name="crime_solved_label">Solved</string>
-    <string name="crime_prova">Ciao</string>
     <string name="contact_police">Contact police</string>
     <string name="crime_title_list">Crime Title</string>
     <string name="crime_date_list">Crime Date</string>
     <string name="crime_done">Crime Done</string>
+    <string name="date_picker_title">Date of crime:</string>
 </resources>
