@@ -9,4 +9,5 @@
     <string name="crime_date_list">Crime Date</string>
     <string name="crime_done">Crime Done</string>
     <string name="date_picker_title">Date of crime:</string>
+    <string name="time_picker_title">Time of crime:</string>
 </resources>

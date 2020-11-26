@@ -18,6 +18,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -30,6 +32,10 @@ public class CrimeFragment extends Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
+
+    private Button mTimeButton;
+    private static final String DIALOG_TIME = "dialogTime";
+    private static final int REQUEST_TIME = 1;
 
     public static CrimeFragment newInstance(UUID crimeId){
         Bundle args = new Bundle();
@@ -80,6 +86,15 @@ public class CrimeFragment extends Fragment {
             dialog.show(manager, DIALOG_DATE);
         });
 
+        mTimeButton = v.findViewById(R.id.crime_time);
+        updateTime();
+        mTimeButton.setOnClickListener(view -> {
+            FragmentManager fm = getFragmentManager();
+            TimePickerFragment dialog2 = TimePickerFragment.newInstance(mCrime.getDate());
+            dialog2.setTargetFragment(CrimeFragment.this, REQUEST_TIME);
+            dialog2.show(fm, DIALOG_TIME);
+        });
+
         mSolvedCheckBox = (CheckBox) v.findViewById(R.id.crime_solved);
         mSolvedCheckBox.setChecked(mCrime.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> mCrime.setSolved(isChecked));
@@ -98,9 +113,28 @@ public class CrimeFragment extends Fragment {
             mCrime.setDate(date);
             updateDate();
         }
+
+        if(requestCode == REQUEST_TIME){
+            Date date = (Date) data
+                    .getSerializableExtra(TimePickerFragment.EXTRA_TIME);
+            mCrime.setDate(date);
+            updateTime();
+        }
+
     }
 
     private void updateDate() {
-        mDateButton.setText(mCrime.getDate().toString());
+        String pattern = "EEE, MMM d, ''yy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String dateString = simpleDateFormat.format(mCrime.getDate());
+        mDateButton.setText(dateString);
+    }
+
+    private void updateTime() {
+        // Challenge
+        String pattern = "h:mm a";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String timeString = simpleDateFormat.format(mCrime.getDate());
+        mTimeButton.setText(timeString);
     }
 }
