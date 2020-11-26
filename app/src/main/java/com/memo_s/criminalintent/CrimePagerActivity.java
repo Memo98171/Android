@@ -42,12 +42,7 @@ public class CrimePagerActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.crime_view_pager);
 
         mFirstButton = findViewById(R.id.first_button);
-        mFirstButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                mViewPager.setCurrentItem(0);
-            }
-        });
+        mFirstButton.setOnClickListener(view -> mViewPager.setCurrentItem(0));
 
         mLastButton = findViewById(R.id.last_button);
         mLastButton.setOnClickListener(new View.OnClickListener(){

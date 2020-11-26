@@ -56,7 +56,10 @@ public class DataPickerFragment extends DialogFragment {
                     int year1 = mDatePicker.getYear();
                     int month1 = mDatePicker.getMonth();
                     int day1 = mDatePicker.getDayOfMonth();
-                    Date date1 = new GregorianCalendar(year1, month1, day1).getTime();
+
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+                    Date date1 = new GregorianCalendar(year1, month1, day1, hour, minute).getTime();
                     sendResult(Activity.RESULT_OK, date1);
                 })
                 .create();
