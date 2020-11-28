@@ -3,7 +3,7 @@ package com.memo_s.criminalintent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
@@ -19,6 +19,8 @@ import java.util.UUID;
 public class CrimePagerActivity extends AppCompatActivity {
 
     private static final String EXTRA_CRIME_ID = "com.memo's.criminalintent.crime_id";
+
+    private static final String TAG = "CrimePagerActivity";
 
     private ViewPager mViewPager;
     private List<Crime> mCrimes;
@@ -45,12 +47,7 @@ public class CrimePagerActivity extends AppCompatActivity {
         mFirstButton.setOnClickListener(view -> mViewPager.setCurrentItem(0));
 
         mLastButton = findViewById(R.id.last_button);
-        mLastButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void  onClick(View view){
-                mViewPager.setCurrentItem(mCrimes.size()-1);
-            }
-        });
+        mLastButton.setOnClickListener(view -> mViewPager.setCurrentItem(mCrimes.size()-1));
 
 
         mCrimes = CrimeLab.get(this).getCrimes();
@@ -60,6 +57,7 @@ public class CrimePagerActivity extends AppCompatActivity {
             @Override
             public Fragment getItem(int position) {
                 Crime crime = mCrimes.get(position);
+                Log.d("CrimePagerActivity", "terminato get(position)");
                 return CrimeFragment.newInstance(crime.getId());
             }
 
@@ -76,4 +74,5 @@ public class CrimePagerActivity extends AppCompatActivity {
             }
         }
     }
+
 }

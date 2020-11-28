@@ -1,6 +1,7 @@
 package com.memo_s.criminalintent;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -21,17 +22,22 @@ public class CrimeLab {
 
     private CrimeLab(Context context){
         mCrimes = new LinkedHashMap<>();
+        Log.d("CrimeLab", "new crime");
     }
 
     public void addCrime(UUID id, Crime c){
         mCrimes.put(id, c);
+        Log.d("CrimeLab", "add crime");
     }
 
     public List<Crime> getCrimes(){
+        Log.d("CrimeLab", "get crimes"+ mCrimes.values());
         return new ArrayList<>(mCrimes.values());
     }
 
     public Crime getCrime(UUID id){
+        Log.d("CrimeLab", "get crime");
+
         return mCrimes.get(id);
     }
 }

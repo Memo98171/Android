@@ -2,6 +2,7 @@ package com.memo_s.criminalintent;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +25,7 @@ import java.util.List;
 
 public class CrimeListFragment extends Fragment {
     private static final int REQUEST_CRIME = 1;
+    private static final String TAG = "CrimeListFragment";
 
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
@@ -35,20 +37,17 @@ public class CrimeListFragment extends Fragment {
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView called");
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
         mCrimeRecyclerView = view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        Log.d(TAG, "prima di savedInstance");
         if(savedInstanceState != null){
-            listItemPosition = savedInstanceState.getInt(SAVED_LIST_ITEM_POSITION, 0);
+            Log.d(TAG, "if savedInstance");
             mSubtitleView = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
+            listItemPosition = savedInstanceState.getInt(SAVED_LIST_ITEM_POSITION);
         }
 
         updateUI();
@@ -61,73 +60,43 @@ public class CrimeListFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+        Log.d(TAG, "onResume called");
+
         updateUI();
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_crime_list, menu);
-
-        MenuItem subtitleItem = menu.findItem(R.id.show_subtitle);
-        if(mSubtitleView){
-            subtitleItem.setTitle(R.string.hide_subtitle);
-        }else{
-            subtitleItem.setTitle(R.string.show_subtitle);
-        }
+    public void onDestroy(){
+        super.onDestroy();
+        Log.d(TAG, "onDestroy called");
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem){
-        switch (menuItem.getItemId()){
-            case R.id.new_crime:
-                Crime crime = new Crime();
-                CrimeLab.get(getActivity()).addCrime(crime.getId(), crime);
-                Intent intent = CrimePagerActivity
-                        .newIntent(getActivity(), crime.getId());
-                startActivity(intent);
-                return true;
-            case R.id.show_subtitle:
-                mSubtitleView = !mSubtitleView;
-                getActivity().invalidateOptionsMenu();
-                updateSubtitle();
-                return true;
-            default:
-                return super.onOptionsItemSelected(menuItem);
-        }
+    public void onPause(){
+        super.onPause();
+        Log.d(TAG, "onPaused called");
     }
 
-    private void updateSubtitle(){
-        CrimeLab crimeLab = CrimeLab.get(getActivity());
-        int crimeCount = crimeLab.getCrimes().size();
-        String subTitle = getString(R.string.subtitle_format, crimeCount);
-
-        if(!mSubtitleView){
-            subTitle = null;
-        }
-
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.getSupportActionBar().setSubtitle(subTitle);
-    }
 
     private void updateUI(){
+        Log.d("CrimeListFragment", "aperto updateUI");
+
         CrimeLab crimeLab = CrimeLab.get(getActivity());
+        Log.d("UpdateUI", "parte1");
+
         List<Crime> crimes = crimeLab.getCrimes();
+        Log.d("UpdateUI", "parte2");
+
 
         if(mAdapter == null){
+            Log.d("upDateUI", "in if");
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         }else{
+            Log.d("upDateUI", "in else");
             mAdapter.notifyItemChanged(listItemPosition);
         }
         updateSubtitle();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState){
-        super.onSaveInstanceState(outState);
-        outState.putInt(SAVED_LIST_ITEM_POSITION, listItemPosition);
-        outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleView);
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -160,12 +129,7 @@ public class CrimeListFragment extends Fragment {
 
             if(mCrime.isRequiresPolice()){
                 mContactPoliceButton = itemView.findViewById(R.id.contact_police_button);
-                mContactPoliceButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(getActivity(), "Police contacted for: " + mCrime.getTitle(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                mContactPoliceButton.setOnClickListener(v -> Toast.makeText(getActivity(), "Police contacted for: " + mCrime.getTitle(), Toast.LENGTH_SHORT).show());
             }else{
                 mSolvedImageView.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
             }
@@ -214,4 +178,68 @@ public class CrimeListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_crime_list, menu);
+
+        MenuItem subtitleItem = menu.findItem(R.id.show_subtitle);
+        if(mSubtitleView){
+            subtitleItem.setTitle(R.string.hide_subtitle);
+        }else{
+            subtitleItem.setTitle(R.string.show_subtitle);
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem){
+        switch (menuItem.getItemId()){
+            case R.id.new_crime:
+                Log.d(TAG, "newCrime in");
+                Crime crime = new Crime();
+                CrimeLab.get(getActivity()).addCrime(crime.getId(), crime);
+                Intent intent = CrimePagerActivity
+                        .newIntent(getActivity(), crime.getId());
+                startActivity(intent);
+                Log.d(TAG, "finito newCrime");
+                return true;
+            case R.id.show_subtitle:
+                mSubtitleView = !mSubtitleView;
+                getActivity().invalidateOptionsMenu();
+                updateUI();
+                return true;
+            default:
+                return super.onOptionsItemSelected(menuItem);
+        }
+    }
+
+    private void updateSubtitle(){
+        CrimeLab crimeLab = CrimeLab.get(getActivity());
+        Log.d("upDateSubtitile", "prima");
+        int crimeCount = crimeLab.getCrimes().size();
+        Log.d("upDateSubtitile", "dopo");
+
+        String subTitle = getString(R.string.subtitle_format, crimeCount);
+
+        if(!mSubtitleView){
+            subTitle = null;
+        }
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setSubtitle(subTitle);
+        Log.d("upDateSubtitile", "finito Activity");
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleView);
+        savedInstanceState.putInt(SAVED_LIST_ITEM_POSITION, listItemPosition);
+    }
 }
