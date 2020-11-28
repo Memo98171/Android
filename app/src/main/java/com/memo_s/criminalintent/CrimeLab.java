@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class CrimeLab {
     private static CrimeLab sCrimeLab;
-    private Map<UUID,Crime> mCrimes;
+    private List<Crime> mCrimes;
 
     public static CrimeLab get(Context context){
         if(sCrimeLab == null){
@@ -21,23 +21,38 @@ public class CrimeLab {
     }
 
     private CrimeLab(Context context){
-        mCrimes = new LinkedHashMap<>();
+        mCrimes = new ArrayList<Crime>();
         Log.d("CrimeLab", "new crime");
     }
 
-    public void addCrime(UUID id, Crime c){
-        mCrimes.put(id, c);
+    public void addCrime(Crime c){
+        mCrimes.add(c);
         Log.d("CrimeLab", "add crime");
     }
 
     public List<Crime> getCrimes(){
-        Log.d("CrimeLab", "get crimes"+ mCrimes.values());
-        return new ArrayList<>(mCrimes.values());
+        Log.d("CrimeLab", "get crimes"+ mCrimes);
+        return mCrimes;
     }
 
     public Crime getCrime(UUID id){
         Log.d("CrimeLab", "get crime");
 
-        return mCrimes.get(id);
+        for(Crime crime : mCrimes){
+            if(crime.getId().equals(id)){
+                return crime;
+            }
+        }
+        return null;
+    }
+
+    public Boolean deleteCrime(UUID id){
+        for(Crime crime : mCrimes){
+            if(crime.getId().equals(id)){
+                mCrimes.remove(crime);
+                return true;
+            }
+        }
+        return false;
     }
 }

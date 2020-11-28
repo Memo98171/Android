@@ -203,7 +203,7 @@ public class CrimeListFragment extends Fragment {
             case R.id.new_crime:
                 Log.d(TAG, "newCrime in");
                 Crime crime = new Crime();
-                CrimeLab.get(getActivity()).addCrime(crime.getId(), crime);
+                CrimeLab.get(getActivity()).addCrime(crime);
                 Intent intent = CrimePagerActivity
                         .newIntent(getActivity(), crime.getId());
                 startActivity(intent);
@@ -225,7 +225,7 @@ public class CrimeListFragment extends Fragment {
         int crimeCount = crimeLab.getCrimes().size();
         Log.d("upDateSubtitile", "dopo");
 
-        String subTitle = getString(R.string.subtitle_format, crimeCount);
+        String subTitle = getResources().getQuantityString(R.plurals.subtitle_plurals, crimeCount, crimeCount);
 
         if(!mSubtitleView){
             subTitle = null;
