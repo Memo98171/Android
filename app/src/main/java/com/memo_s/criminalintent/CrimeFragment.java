@@ -13,15 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -56,6 +53,14 @@ public class CrimeFragment extends Fragment {
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
 
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        CrimeLab.get(getActivity())
+                .updateCrime(mCrime);
     }
 
     @Nullable
@@ -153,7 +158,7 @@ public class CrimeFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.delete_crime:
                 getActivity().finish();
-                return CrimeLab.get(getActivity()).deleteCrime(mCrime.getId());
+                return CrimeLab.get(getActivity()).deleteCrime(mCrime.getId().toString());
             default: super.onOptionsItemSelected(item);
         }
         return false;

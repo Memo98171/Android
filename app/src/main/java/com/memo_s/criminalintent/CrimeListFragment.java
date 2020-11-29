@@ -25,7 +25,6 @@ import java.util.List;
 
 public class CrimeListFragment extends Fragment {
     private static final int REQUEST_CRIME = 1;
-    private static final String TAG = "CrimeListFragment";
 
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
@@ -38,14 +37,11 @@ public class CrimeListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView called");
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
         mCrimeRecyclerView = view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        Log.d(TAG, "prima di savedInstance");
         if(savedInstanceState != null){
-            Log.d(TAG, "if savedInstance");
             mSubtitleView = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
             listItemPosition = savedInstanceState.getInt(SAVED_LIST_ITEM_POSITION);
         }
@@ -60,40 +56,31 @@ public class CrimeListFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        Log.d(TAG, "onResume called");
-
         updateUI();
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-        Log.d(TAG, "onDestroy called");
     }
 
     @Override
     public void onPause(){
         super.onPause();
-        Log.d(TAG, "onPaused called");
     }
 
 
     private void updateUI(){
-        Log.d("CrimeListFragment", "aperto updateUI");
-
         CrimeLab crimeLab = CrimeLab.get(getActivity());
-        Log.d("UpdateUI", "parte1");
 
         List<Crime> crimes = crimeLab.getCrimes();
-        Log.d("UpdateUI", "parte2");
 
 
         if(mAdapter == null){
-            Log.d("upDateUI", "in if");
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         }else{
-            Log.d("upDateUI", "in else");
+            mAdapter.setCrimes(crimes);
             mAdapter.notifyItemChanged(listItemPosition);
         }
         updateSubtitle();
@@ -168,6 +155,10 @@ public class CrimeListFragment extends Fragment {
             return mCrimes.size();
         }
 
+        public void setCrimes(List<Crime> crimes){
+            mCrimes = crimes;
+        }
+
         @Override
         public int getItemViewType(int position){
             if(mCrimes.get(position).isRequiresPolice()){
@@ -201,13 +192,11 @@ public class CrimeListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem menuItem){
         switch (menuItem.getItemId()){
             case R.id.new_crime:
-                Log.d(TAG, "newCrime in");
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
                 Intent intent = CrimePagerActivity
                         .newIntent(getActivity(), crime.getId());
                 startActivity(intent);
-                Log.d(TAG, "finito newCrime");
                 return true;
             case R.id.show_subtitle:
                 mSubtitleView = !mSubtitleView;
