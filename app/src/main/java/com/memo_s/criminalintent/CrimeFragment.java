@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -145,6 +146,31 @@ public class CrimeFragment extends Fragment {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String timeString = simpleDateFormat.format(mCrime.getDate());
         mTimeButton.setText(timeString);
+    }
+
+    private String getCrimeReport(){
+        String solvedString = null;
+        if(mCrime.isSolved()){
+            solvedString = getString(R.string.crime_report_solved);
+        }else{
+            solvedString = getString(R.string.crime_report_unsolved);
+        }
+
+        String dateFormat = "EEE, MMM dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+        String dateString = simpleDateFormat.format(mCrime.getDate().toString());
+
+        String suspect = mCrime.getSuspect();
+        if(suspect == null){
+            suspect = getString(R.string.crime_report_no_suspect);
+        }else{
+            suspect = getString(R.string.crime_report_suspect);
+        }
+
+        String report = getString(R.string.crime_report,
+                mCrime.getTitle(), dateString, solvedString, suspect);
+
+        return report;
     }
 
     @Override

@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.UUID;
 
 public class CrimeCursorWrapper extends CursorWrapper {
-    private Crime mCrime;
     public CrimeCursorWrapper(Cursor cursor){
         super(cursor);
     }
@@ -20,12 +19,14 @@ public class CrimeCursorWrapper extends CursorWrapper {
         long date = getLong(getColumnIndex(CrimeDbSchema.CrimeTable.Cols.DATE));
         int solved = getInt(getColumnIndex(CrimeDbSchema.CrimeTable.Cols.SOLVED));
         int request = getInt(getColumnIndex(CrimeDbSchema.CrimeTable.Cols.REQUIRED));
+        String suspect = getString(getColumnIndex(CrimeDbSchema.CrimeTable.Cols.SUSPECT));
 
         Crime crime = new Crime(UUID.fromString(uuidString));
         crime.setTitle(title);
         crime.setDate(new Date(date));
         crime.setSolved(solved != 0);
         crime.setRequiresPolice(request != 0);
+        crime.setSuspect(suspect);
 
         return crime;
     }

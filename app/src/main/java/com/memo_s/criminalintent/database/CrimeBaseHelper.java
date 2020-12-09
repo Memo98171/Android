@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.memo_s.criminalintent.Crime;
 import com.memo_s.criminalintent.database.CrimeDbSchema.CrimeTable;
 
 public class CrimeBaseHelper extends SQLiteOpenHelper {
@@ -23,7 +22,8 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
                 CrimeTable.Cols.TITLE + ", " +
                 CrimeTable.Cols.DATE + ", " +
                 CrimeTable.Cols.SOLVED + ", " +
-                CrimeTable.Cols.REQUIRED +
+                CrimeTable.Cols.REQUIRED + ", " +
+                CrimeTable.Cols.SUSPECT +
                 ")"
         );
     }
